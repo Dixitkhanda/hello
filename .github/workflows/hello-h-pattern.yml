@@ -1,74 +1,82 @@
-name: Full Year Pattern Commits
+name: DIXIT Pattern Commits
 
 on:
   schedule:
-    - cron: "30 2 * * *"  # Daily at 8:00 AM IST
+    - cron: "30 2 * * *"  # Roz 8:00 AM IST pe chalega
   workflow_dispatch:
 
 jobs:
-  full-year-pattern:
+  dixit-pattern:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      
+      - name: Setup git config
+        run: |
+          git config --global user.name "dixitkumar1"
+          git config --global user.email "dixitsharma.tech@gmail.com"
 
-      - name: Smart Commits All Year
+      - name: Commit DIXIT pattern
         run: |
           TODAY=$(date +%Y-%m-%d)
-
-          # Date:Commits pattern for full year
-          PATTERN=(
-            # H Pattern (June)
-            "2025-06-08:1" "2025-06-09:1" "2025-06-10:1" "2025-06-11:1" "2025-06-12:1"
-            "2025-06-13:1" "2025-06-14:1" "2025-06-15:1" "2025-06-16:1" "2025-06-17:1"
-            "2025-06-18:1" "2025-06-19:1" "2025-06-20:1" "2025-06-21:1" "2025-06-22:1"
-            "2025-06-23:1" "2025-06-24:1" "2025-06-25:1" "2025-06-26:1" "2025-06-27:1"
-            "2025-06-28:1" "2025-06-29:1"
-
-            # July heavy random
-            "2025-07-01:2" "2025-07-03:4" "2025-07-04:3" "2025-07-06:6" "2025-07-09:2"
-            "2025-07-11:5" "2025-07-14:3" "2025-07-15:4" "2025-07-18:7" "2025-07-20:6"
-            "2025-07-23:2" "2025-07-25:5" "2025-07-28:3" "2025-07-30:4"
-
-            # August to December random heavy
-            "2025-08-03:6" "2025-08-05:4" "2025-08-07:3" "2025-08-10:5" "2025-08-12:2" "2025-08-15:7"
-            "2025-09-02:3" "2025-09-05:6" "2025-09-09:4" "2025-09-12:5" "2025-09-15:3" "2025-09-20:6"
-            "2025-10-01:5" "2025-10-03:4" "2025-10-06:7" "2025-10-10:3" "2025-10-14:5"
-            "2025-11-04:3" "2025-11-07:6" "2025-11-11:4" "2025-11-15:3" "2025-11-20:5"
-            "2025-12-05:6" "2025-12-10:7" "2025-12-15:4" "2025-12-20:6" "2025-12-25:8"
-          )
-
-          # Git setup
-          git config --global user.name "Dixitkhanda"
-          git config --global user.email "dixitkhanda1@gmail.com"
           git pull --rebase origin main
 
-          # Commit function
-          make_commit() {
-            for i in $(seq 1 "$1"); do
-              echo "// Auto Commit $i on $TODAY" >> hello.cpp
+          # Dates and commits count for each block in "DIXIT" pattern (June 2025)
+          # Format: YYYY-MM-DD:commit_count
+          # 20 commits = dark green, less commits = lighter color
+
+          D_DATES=(
+            "2025-06-01:20" "2025-06-02:20" "2025-06-03:20" "2025-06-04:20" "2025-06-05:20"
+            "2025-06-08:20" "2025-06-09:20" "2025-06-10:20" "2025-06-11:20"
+            "2025-06-15:20" "2025-06-16:20" "2025-06-17:20"
+          )
+
+          I1_DATES=(
+            "2025-06-19:20" "2025-06-26:20"
+          )
+
+          X_DATES=(
+            "2025-06-06:20" "2025-06-07:20"
+            "2025-06-13:20" "2025-06-14:20"
+            "2025-06-20:20" "2025-06-21:20"
+            "2025-06-27:20" "2025-06-28:20"
+          )
+
+          I2_DATES=(
+            "2025-06-22:20" "2025-06-29:20"
+          )
+
+          T_DATES=(
+            "2025-06-23:20" "2025-06-24:20" "2025-06-25:20" "2025-06-30:20"
+          )
+
+          ALL_DATES=("${D_DATES[@]}" "${I1_DATES[@]}" "${X_DATES[@]}" "${I2_DATES[@]}" "${T_DATES[@]}")
+
+          make_commits() {
+            COUNT=$1
+            for i in $(seq 1 $COUNT); do
+              echo "// DIXIT Commit $i on $TODAY" >> hello.cpp
               git add hello.cpp
-              git commit -m "Auto Commit $i on $TODAY"
+              git commit -m "DIXIT Commit $i on $TODAY"
             done
             git push origin main
           }
 
-          # Check if today's date is in PATTERN list
-          COMMIT_COUNT=0
-          for entry in "${PATTERN[@]}"; do
+          FOUND=0
+          for entry in "${ALL_DATES[@]}"; do
             DATE=$(echo "$entry" | cut -d: -f1)
             COUNT=$(echo "$entry" | cut -d: -f2)
             if [[ "$DATE" == "$TODAY" ]]; then
-              COMMIT_COUNT=$COUNT
+              make_commits $COUNT
+              FOUND=1
               break
             fi
           done
 
-          if [[ $COMMIT_COUNT -gt 0 ]]; then
-            make_commit "$COMMIT_COUNT"
-          else
-            echo "// Normal Commit on $TODAY" >> hello.cpp
+          if [[ $FOUND -eq 0 ]]; then
+            # Agar aaj pattern me date nahi hai to halki green ke liye ek commit
+            echo "// Light commit on $TODAY" >> hello.cpp
             git add hello.cpp
-            git commit -m "Normal Commit on $TODAY"
+            git commit -m "Light Commit on $TODAY"
             git push origin main
           fi
