@@ -16,32 +16,31 @@ jobs:
         run: |
           TODAY=$(date +%Y-%m-%d)
 
-          # Dates for H pattern from June 9 onwards (update as per your pattern)
+          # H pattern commit dates (starting 9 June)
           H_DATES=(
             "2025-06-09" "2025-06-10" "2025-06-11" "2025-06-12" "2025-06-13"
             "2025-06-14" "2025-06-15" "2025-06-16" "2025-06-17" "2025-06-18"
             "2025-06-19" "2025-06-20" "2025-06-21" "2025-06-22" "2025-06-23"
             "2025-06-24" "2025-06-25" "2025-06-26" "2025-06-27" "2025-06-28"
-            "2025-06-29" "2025-06-06" "2025-06-07" "2025-06-08"
+            "2025-06-29"
           )
 
-          # Poora 2025 ke liye simple hello world commits har din
-          YEAR=$(date +%Y)
+          # Git config with your  name & email
+          git config --global user.name "Dixitkhanda"
+          git config --global user.email "dixitkhanda1@gmail.com"
 
-          # Check if today is in H pattern dates
+          # Pull latest changes to avoid conflicts
+          git pull --rebase origin main
+
+          # Make commit
           if printf '%s\n' "${H_DATES[@]}" | grep -q "$TODAY"; then
             echo "// H Commit on $TODAY" >> hello.cpp
-            git config --global user.name "Dixit Kumar"
-            git config --global user.email "dixitkhanda1@gmail.com"
             git add hello.cpp
             git commit -m "H Commit on $TODAY"
-            git push
+            git push origin main
           else
-            # Normal daily commit for other days - poora saal
             echo "// Hello World Commit on $TODAY" >> hello.cpp
-            git config --global user.name "Dixit Khanda"
-            git config --global user.email "dixitkhanda1@gmail.com"
             git add hello.cpp
             git commit -m "Hello World Commit on $TODAY"
-            git push
+            git push origin main
           fi
