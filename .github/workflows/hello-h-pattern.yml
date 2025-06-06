@@ -39,7 +39,7 @@ jobs:
           else
             # Normal daily commit for other days - poora saal
             echo "// Hello World Commit on $TODAY" >> hello.cpp
-            git config --global user.name "Dixit Kumar"
+            git config --global user.name "Dixit Khanda"
             git config --global user.email "dixitkhanda1@gmail.com"
             git add hello.cpp
             git commit -m "Hello World Commit on $TODAY"
