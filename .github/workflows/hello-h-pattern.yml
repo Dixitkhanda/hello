@@ -1,46 +1,74 @@
-name: H Pattern Commits
+name: Full Year Pattern Commits
 
 on:
   schedule:
-    - cron: "30 2 * * *"  # Run daily at 8:00 AM IST
+    - cron: "30 2 * * *"  # Daily at 8:00 AM IST
   workflow_dispatch:
 
 jobs:
-  commit-h-pattern:
+  full-year-pattern:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Conditionally Commit to Make H
+      - name: Smart Commits All Year
         run: |
           TODAY=$(date +%Y-%m-%d)
 
-          # H pattern commit dates (starting from 8 June)
-          H_DATES=(
-            "2025-06-08" "2025-06-09" "2025-06-10" "2025-06-11" "2025-06-12"
-            "2025-06-13" "2025-06-14" "2025-06-15" "2025-06-16" "2025-06-17"
-            "2025-06-18" "2025-06-19" "2025-06-20" "2025-06-21" "2025-06-22"
-            "2025-06-23" "2025-06-24" "2025-06-25" "2025-06-26" "2025-06-27"
-            "2025-06-28" "2025-06-29"
+          # Date:Commits pattern for full year
+          PATTERN=(
+            # H Pattern (June)
+            "2025-06-08:1" "2025-06-09:1" "2025-06-10:1" "2025-06-11:1" "2025-06-12:1"
+            "2025-06-13:1" "2025-06-14:1" "2025-06-15:1" "2025-06-16:1" "2025-06-17:1"
+            "2025-06-18:1" "2025-06-19:1" "2025-06-20:1" "2025-06-21:1" "2025-06-22:1"
+            "2025-06-23:1" "2025-06-24:1" "2025-06-25:1" "2025-06-26:1" "2025-06-27:1"
+            "2025-06-28:1" "2025-06-29:1"
+
+            # July heavy random
+            "2025-07-01:2" "2025-07-03:4" "2025-07-04:3" "2025-07-06:6" "2025-07-09:2"
+            "2025-07-11:5" "2025-07-14:3" "2025-07-15:4" "2025-07-18:7" "2025-07-20:6"
+            "2025-07-23:2" "2025-07-25:5" "2025-07-28:3" "2025-07-30:4"
+
+            # August to December random heavy
+            "2025-08-03:6" "2025-08-05:4" "2025-08-07:3" "2025-08-10:5" "2025-08-12:2" "2025-08-15:7"
+            "2025-09-02:3" "2025-09-05:6" "2025-09-09:4" "2025-09-12:5" "2025-09-15:3" "2025-09-20:6"
+            "2025-10-01:5" "2025-10-03:4" "2025-10-06:7" "2025-10-10:3" "2025-10-14:5"
+            "2025-11-04:3" "2025-11-07:6" "2025-11-11:4" "2025-11-15:3" "2025-11-20:5"
+            "2025-12-05:6" "2025-12-10:7" "2025-12-15:4" "2025-12-20:6" "2025-12-25:8"
           )
 
-          # Git config with your real name & email
+          # Git setup
           git config --global user.name "Dixitkhanda"
           git config --global user.email "dixitkhanda1@gmail.com"
-
-          # Pull latest changes to avoid conflicts
           git pull --rebase origin main
 
-          # Make commit
-          if printf '%s\n' "${H_DATES[@]}" | grep -q "$TODAY"; then
-            echo "// H Commit on $TODAY" >> hello.cpp
-            git add hello.cpp
-            git commit -m "H Commit on $TODAY"
+          # Commit function
+          make_commit() {
+            for i in $(seq 1 "$1"); do
+              echo "// Auto Commit $i on $TODAY" >> hello.cpp
+              git add hello.cpp
+              git commit -m "Auto Commit $i on $TODAY"
+            done
             git push origin main
+          }
+
+          # Check if today's date is in PATTERN list
+          COMMIT_COUNT=0
+          for entry in "${PATTERN[@]}"; do
+            DATE=$(echo "$entry" | cut -d: -f1)
+            COUNT=$(echo "$entry" | cut -d: -f2)
+            if [[ "$DATE" == "$TODAY" ]]; then
+              COMMIT_COUNT=$COUNT
+              break
+            fi
+          done
+
+          if [[ $COMMIT_COUNT -gt 0 ]]; then
+            make_commit "$COMMIT_COUNT"
           else
-            echo "// Hello World Commit on $TODAY" >> hello.cpp
+            echo "// Normal Commit on $TODAY" >> hello.cpp
             git add hello.cpp
-            git commit -m "Hello World Commit on $TODAY"
+            git commit -m "Normal Commit on $TODAY"
             git push origin main
           fi
