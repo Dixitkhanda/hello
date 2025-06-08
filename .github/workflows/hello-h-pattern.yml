@@ -13,8 +13,8 @@ jobs:
       
       - name: Setup git config
         run: |
-          git config --global user.name "dixitkumar1"
-          git config --global user.email "dixitsharma.tech@gmail.com"
+          git config --global user.name "dixitkhanda"
+          git config --global user.email "dixitkhanda1@gmail.com"
 
       - name: Commit DIXIT pattern
         run: |
