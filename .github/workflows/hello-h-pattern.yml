@@ -22,9 +22,6 @@ jobs:
           git pull --rebase origin main
 
           # Dates and commits count for each block in "DIXIT" pattern (June 2025)
-          # Format: YYYY-MM-DD:commit_count
-          # 20 commits = dark green, less commits = lighter color
-
           D_DATES=(
             "2025-06-01:20" "2025-06-02:20" "2025-06-03:20" "2025-06-04:20" "2025-06-05:20"
             "2025-06-08:20" "2025-06-09:20" "2025-06-10:20" "2025-06-11:20"
@@ -55,10 +52,19 @@ jobs:
           make_commits() {
             COUNT=$1
             for i in $(seq 1 $COUNT); do
-              echo "// DIXIT Commit $i on $TODAY" >> hello.cpp
+              echo "// DIXIT Commit $i on $TODAY - $(date +%s)" >> hello.cpp
               git add hello.cpp
               git commit -m "DIXIT Commit $i on $TODAY"
             done
+
+            # Line count check & reset hello.cpp if >1000 lines
+            LINE_COUNT=$(wc -l < hello.cpp)
+            if [ "$LINE_COUNT" -gt 1000 ]; then
+              echo "// Reset on $TODAY - Auto-cleaned commit comments" > hello.cpp
+              git add hello.cpp
+              git commit -m "Reset hello.cpp after 1000+ lines"
+            fi
+
             git push origin main
           }
 
@@ -74,9 +80,16 @@ jobs:
           done
 
           if [[ $FOUND -eq 0 ]]; then
-            # Agar aaj pattern me date nahi hai to halki green ke liye ek commit
-            echo "// Light commit on $TODAY" >> hello.cpp
+            echo "// Light commit on $TODAY - $(date +%s)" >> hello.cpp
             git add hello.cpp
             git commit -m "Light Commit on $TODAY"
+
+            LINE_COUNT=$(wc -l < hello.cpp)
+            if [ "$LINE_COUNT" -gt 1000 ]; then
+              echo "// Reset on $TODAY - Auto-cleaned commit comments" > hello.cpp
+              git add hello.cpp
+              git commit -m "Reset hello.cpp after 1000+ lines"
+            fi
+
             git push origin main
           fi
